@@ -38,16 +38,16 @@ def create_movie(movie:pyd.CreateMovie, db:Session=Depends(get_db)):
     db.commit()
     return movie_db
 
-# @app.delete("/product/{product_id}")
-# def delete_product(product_id:int, db:Session=Depends(get_db)):
-#     product = db.query(m.Product).filter(
-#         m.Product.id==product_id
-#     ).first()
-#     if not product:
-#         raise HTTPException(404, 'Товар не найден')
-#     db.delete(product)
-#     db.commit()
-#     return {'detail': "Товар удалён"}
+@app.delete("/movies/{id}")
+def delete_movie(id:int, db:Session=Depends(get_db)):
+    movie = db.query(m.Movie).filter(
+        m.Movie.id==id
+    ).first()
+    if not movie:
+        raise HTTPException(404, 'Фильм не найден')
+    db.delete(movie)
+    db.commit()
+    return {'detail': "Фильм удалён"}
 
 # # Планеты
 # @app.get("/planets", response_model=List[pyd.BasePlanet])
