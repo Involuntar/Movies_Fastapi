@@ -14,14 +14,14 @@ def get_all_movies(db:Session=Depends(get_db)):
     movies = db.query(m.Movie).all()
     return movies
 
-# @app.get("/product/{product_id}", response_model=pyd.BaseProduct)
-# def get_planet(product_id:int, db:Session=Depends(get_db)):
-#     product = db.query(m.Product).filter(
-#         m.Product.id==product_id
-#     ).first()
-#     if not product:
-#         raise HTTPException(404, 'Товар не найден')
-#     return product
+@app.get("/movies/{id}", response_model=pyd.BaseMovie)
+def get_movie(id:int, db:Session=Depends(get_db)):
+    movie = db.query(m.Movie).filter(
+        m.Movie.id==id
+    ).first()
+    if not movie:
+        raise HTTPException(404, 'Фильм не найден')
+    return movie
 
 # @app.post("/product", response_model=pyd.BaseProduct)
 # def create_product(product:pyd.CreateProduct, db:Session=Depends(get_db)):
