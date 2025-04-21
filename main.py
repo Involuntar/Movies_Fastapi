@@ -23,14 +23,20 @@ def get_movie(id:int, db:Session=Depends(get_db)):
         raise HTTPException(404, 'Фильм не найден')
     return movie
 
-# @app.post("/product", response_model=pyd.BaseProduct)
-# def create_product(product:pyd.CreateProduct, db:Session=Depends(get_db)):
-#     product_db = m.Product()
-#     product_db.product_name = product.product_name
+@app.post("/movies", response_model=pyd.BaseMovie)
+def create_movie(movie:pyd.CreateMovie, db:Session=Depends(get_db)):
+    movie_db = m.Movie()
+    movie_db.movie_name = movie.movie_name
+    movie_db.year = movie.year
+    movie_db.time = movie.time
+    movie_db.rate = movie.rate
+    movie_db.description = movie.description
+    movie_db.poster = movie.poster
+    movie_db.add_date = movie.add_date
 
-#     db.add(product_db)
-#     db.commit()
-#     return product_db
+    db.add(movie_db)
+    db.commit()
+    return movie_db
 
 # @app.delete("/product/{product_id}")
 # def delete_product(product_id:int, db:Session=Depends(get_db)):
