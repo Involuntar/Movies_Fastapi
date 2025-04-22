@@ -83,7 +83,11 @@ def upload_image(id: int, image: UploadFile, db: Session = Depends(get_db)):
         raise HTTPException(413, "Файл слишком большой")
     print(image.content_type)
     filename = ''.join(random.sample(string.digits + string.ascii_letters, 15))
-    with open(f"files/{filename}.{image.content_type[6:]}", "wb") as f:
+
+    files_directory = os.path.join(os.getcwd(), 'files')
+    if not os.path.exists(files_directory):
+        os.makedirs(files_directory)
+    with open(f"files/{filename}.{image.content_type[6:]}", "wb+") as f:
         shutil.copyfileobj(image.file, f)
     movie_db.poster = f"files/{filename}.{image.content_type[6:]}"
     db.commit()
