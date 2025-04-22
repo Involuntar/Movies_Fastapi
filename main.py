@@ -38,6 +38,23 @@ def create_movie(movie:pyd.CreateMovie, db:Session=Depends(get_db)):
     db.commit()
     return movie_db
 
+@app.put("/movies/{id}", response_model=pyd.CreateMovie)
+def update_movie(id:int, movie:pyd.CreateMovie, db:Session=Depends(get_db)):
+    movie_db = db.query(m.Movie).filter(
+        m.Movie.id==id
+    ).first()
+    movie_db.movie_name = movie.movie_name
+    movie_db.year = movie.year
+    movie_db.time = movie.time
+    movie_db.rate = movie.rate
+    movie_db.description = movie.description
+    movie_db.poster = movie.poster
+    movie_db.add_date = movie.add_date
+
+    db.add(movie_db)
+    db.commit()
+    return movie_db
+
 @app.delete("/movies/{id}")
 def delete_movie(id:int, db:Session=Depends(get_db)):
     movie = db.query(m.Movie).filter(
