@@ -1,9 +1,13 @@
-from fastapi import FastAPI, HTTPException, Depends
+import os
+import shutil
+from fastapi import FastAPI, HTTPException, Depends, UploadFile
 from database import get_db
 from sqlalchemy.orm import Session
 import models as m
 from typing import List
 import pyd
+import string
+import random
 
 
 app=FastAPI()
@@ -65,6 +69,25 @@ def delete_movie(id:int, db:Session=Depends(get_db)):
     db.delete(movie)
     db.commit()
     return {'detail': "Фильм удалён"}
+
+@app.put("/movies/{id}/image", response_model=pyd.CreateMovie)
+def upload_image(id: int, image: UploadFile, db: Session = Depends(get_db)):
+    movie_db = (
+        db.query(m.Movie).filter(m.Movie.id == id).first()
+    )
+    if not movie_db:
+        raise HTTPException(404)
+    if image.content_type not in ("image/png", "image/jpeg"):
+        raise HTTPException(400, "Неверный тип данных")
+    if image.size > 5242880:
+        raise HTTPException(413, "Файл слишком большой")
+    print(image.content_type)
+    filename = ''.join(random.sample(string.digits + string.ascii_letters, 15))
+    with open(f"files/{filename}.{image.content_type[6:]}", "wb") as f:
+        shutil.copyfileobj(image.file, f)
+    movie_db.poster = f"files/{filename}.{image.content_type[6:]}"
+    db.commit()
+    return movie_db
 
 # Жанры
 @app.get('/genres', response_model=List[pyd.BaseGenre])
