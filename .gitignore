@@ -3,3 +3,4 @@
 .env
 *.sqlite
 /files
+pyd/__pycache__
