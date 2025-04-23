@@ -14,3 +14,5 @@ class CreateMovie(BaseModel):
     description:str|None=Field(example="Фильм-катастрофа")
     poster:str=Field(example="/ссылка")
     add_date:date=Field(exmaple="2012-12-12")
+
+    genre_id:int=Field(example=1)

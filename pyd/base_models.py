@@ -1,4 +1,3 @@
-from datetime import datetime as dt
 from datetime import date
 from pydantic import BaseModel, Field
 
@@ -16,3 +15,7 @@ class BaseMovie(BaseModel):
     description:str|None=Field(example="Фильм-катастрофа")
     poster:str=Field(example="/ссылка")
     add_date:date=Field(example="2012-12-12")
+
+class BaseGenreMovie(BaseModel):
+    id:int=Field(example=1)
+

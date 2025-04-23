@@ -1,4 +1,5 @@
 from .base_models import *
 
-class SchemaMovie(BaseMovie):
+class SchemeGenreMovie(BaseGenreMovie):
+    movie: BaseMovie
     genre: BaseGenre
