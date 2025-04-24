@@ -1,5 +1,5 @@
 from .base_models import *
+from typing import List
 
-class SchemeGenreMovie(BaseGenreMovie):
-    movie: BaseMovie
-    genre: BaseGenre
+class SchemeMovie(BaseMovie):
+    genres: List[BaseGenre]

@@ -13,21 +13,21 @@ import random
 app=FastAPI()
 
 # Фильмы
-@app.get('/movies', response_model=List[pyd.SchemeGenreMovie])
+@app.get('/movies', response_model=List[pyd.SchemeMovie])
 def get_all_movies(db:Session=Depends(get_db)):
-    movies = db.query(m.Genre_Movie).all()
+    movies = db.query(m.Movie).all()
     return movies
 
-@app.get("/movies/{id}", response_model=pyd.SchemeGenreMovie)
+@app.get("/movies/{id}", response_model=pyd.SchemeMovie)
 def get_movie(id:int, db:Session=Depends(get_db)):
-    movie = db.query(m.Genre_Movie).filter(
+    movie = db.query(m.Movie).filter(
         m.Movie.id==id
     ).first()
     if not movie:
         raise HTTPException(404, 'Фильм не найден')
     return movie
 
-@app.post("/movies", response_model=pyd.CreateMovie)
+@app.post("/movies", response_model=pyd.SchemeMovie)
 def create_movie(movie:pyd.CreateMovie, db:Session=Depends(get_db)):
     movie_db = m.Movie()
     movie_db.movie_name = movie.movie_name
@@ -38,16 +38,22 @@ def create_movie(movie:pyd.CreateMovie, db:Session=Depends(get_db)):
     movie_db.poster = movie.poster
     movie_db.add_date = movie.add_date
 
+    for genre_id in movie.genres_id:
+        genre_db = db.query(m.Genre).filter(m.Genre.id == genre_id).first()
+        if genre_db:
+            movie_db.genres.append(genre_db)
+        else:
+            raise HTTPException(status_code=404, detail="Категория не найдена!")
+
     db.add(movie_db)
     db.commit()
     return movie_db
 
-@app.put("/movies/{id}", response_model=pyd.CreateMovie)
+@app.put("/movies/{id}", response_model=pyd.SchemeMovie)
 def update_movie(id:int, movie:pyd.CreateMovie, db:Session=Depends(get_db)):
     movie_db = db.query(m.Movie).filter(
         m.Movie.id==id
     ).first()
-    genre_db = m.Genre_Movie()
     movie_db.movie_name = movie.movie_name
     movie_db.year = movie.year
     movie_db.time = movie.time
@@ -56,11 +62,15 @@ def update_movie(id:int, movie:pyd.CreateMovie, db:Session=Depends(get_db)):
     movie_db.poster = movie.poster
     movie_db.add_date = movie.add_date
 
-    genre_db.genre_id = movie.genre_id
-    genre_db.movie_id = id
+    movie_db.genres = []
+    for genre_id in movie.genres_id:
+        genre_db = db.query(m.Genre).filter(m.Genre.id == genre_id).first()
+        if genre_db:
+            movie_db.genres.append(genre_db)
+        else:
+            raise HTTPException(status_code=404, detail="Категория не найдена!")
 
     db.add(movie_db)
-    db.add(genre_db)
     db.commit()
     return movie_db
 
@@ -75,7 +85,7 @@ def delete_movie(id:int, db:Session=Depends(get_db)):
     db.commit()
     return {'detail': "Фильм удалён"}
 
-@app.put("/movies/{id}/image", response_model=pyd.CreateMovie)
+@app.put("/movies/{id}/image", response_model=pyd.SchemeMovie)
 def upload_image(id: int, image: UploadFile, db: Session = Depends(get_db)):
     movie_db = (
         db.query(m.Movie).filter(m.Movie.id == id).first()

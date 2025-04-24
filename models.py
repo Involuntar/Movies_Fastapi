@@ -19,13 +19,10 @@ class Movie(Base):
     poster = Column(String)
     add_date = Column(Date)
     
-    genremovie = relationship("Genre_Movie", backref="movies", cascade="all, delete")
+    genres = relationship("Genre", secondary="genre_movies", backref="movies")
 
 class Genre_Movie(Base):
     __tablename__="genre_movies"
     id = Column(Integer, primary_key=True, autoincrement=True)
     movie_id = Column(Integer, ForeignKey("movies.id"))
     genre_id = Column(Integer, ForeignKey("genres.id"), nullable=True)
-
-    genre = relationship("Genre", backref="genre_movies")
-    movie = relationship("Movie", backref="genre_movies")

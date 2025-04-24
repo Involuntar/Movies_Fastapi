@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime as dt
 from datetime import date
+from typing import List
 
 class CreateGenre(BaseModel):
     genre_name:str=Field(example='Триллер')
@@ -15,4 +16,4 @@ class CreateMovie(BaseModel):
     poster:str=Field(example="/ссылка")
     add_date:date=Field(exmaple="2012-12-12")
 
-    genre_id:int=Field(example=1)
+    genres_id:List[int]=Field()
