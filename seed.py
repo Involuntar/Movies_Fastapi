@@ -2,6 +2,7 @@ from datetime import datetime as dt
 from sqlalchemy.orm import Session
 from database import engine
 import models as m
+import bcrypt
 
 
 m.Base.metadata.drop_all(bind=engine)
@@ -91,7 +92,8 @@ with Session(bind=engine) as session:
 
     user = m.User(
         username = "admin",
-        password = "pass"
+        password = bcrypt.hashpw(b"pass", bcrypt.gensalt()),
+        email = "mail@mail.com"
     )
     session.add(user)
 

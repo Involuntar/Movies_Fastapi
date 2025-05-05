@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from datetime import datetime as dt
 from datetime import date
 from typing import List
@@ -17,3 +17,8 @@ class CreateMovie(BaseModel):
     add_date:date=Field(exmaple="2012-12-12")
 
     genres_id:List[int]=Field()
+
+class CreateUser(BaseModel):
+    username:str=Field(example="username", min_length=3, max_length=60)
+    password:str=Field(example="password", min_length=8, max_length=20)
+    email:EmailStr=Field(example="mail@mail.com")

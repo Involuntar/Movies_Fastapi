@@ -1,5 +1,5 @@
 from datetime import date
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 class BaseGenre(BaseModel):
     id:int=Field(example=1)
@@ -19,3 +19,7 @@ class BaseMovie(BaseModel):
 class BaseGenreMovie(BaseModel):
     id:int=Field(example=1)
 
+class BaseUser(BaseModel):
+    id:int
+    username:str=Field(exmaple="name")
+    email:EmailStr=Field(example="mail@mail.com")

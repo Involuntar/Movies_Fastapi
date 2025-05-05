@@ -9,6 +9,7 @@ import pyd
 import string
 import random
 from auth import basic_auth
+import bcrypt
 
 
 app=FastAPI()
@@ -124,3 +125,19 @@ def create_genre(genre:pyd.CreateGenre, db:Session=Depends(get_db), user: m.User
     db.add(genre_db)
     db.commit()
     return genre_db
+
+# Пользователь
+@app.post("/register", response_model=pyd.BaseUser)
+def user_register(create_user:pyd.CreateUser, db:Session=Depends(get_db)):
+    user_db=db.query(m.User).filter(m.User.username == create_user.username).first()
+    if user_db:
+        raise HTTPException(400, "Пользвоталеь с таким логином уже существует")
+    user_db=m.User()
+
+    user_db.username = create_user.username
+    user_db.password = bcrypt.hashpw(str.encode(create_user.password), bcrypt.gensalt())
+    user_db.email = create_user.email
+
+    db.add(user_db)
+    db.commit()
+    return user_db
