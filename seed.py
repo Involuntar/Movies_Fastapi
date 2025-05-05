@@ -89,4 +89,10 @@ with Session(bind=engine) as session:
     )
     session.add(genre_movie5)
 
+    user = m.User(
+        username = "admin",
+        password = "pass"
+    )
+    session.add(user)
+
     session.commit()

@@ -8,6 +8,7 @@ from typing import List
 import pyd
 import string
 import random
+from auth import basic_auth
 
 
 app=FastAPI()
@@ -28,7 +29,7 @@ def get_movie(id:int, db:Session=Depends(get_db)):
     return movie
 
 @app.post("/movies", response_model=pyd.SchemeMovie)
-def create_movie(movie:pyd.CreateMovie, db:Session=Depends(get_db)):
+def create_movie(movie:pyd.CreateMovie, db:Session=Depends(get_db), user: m.User = Depends(basic_auth)):
     movie_db = m.Movie()
     movie_db.movie_name = movie.movie_name
     movie_db.year = movie.year
@@ -50,7 +51,7 @@ def create_movie(movie:pyd.CreateMovie, db:Session=Depends(get_db)):
     return movie_db
 
 @app.put("/movies/{id}", response_model=pyd.SchemeMovie)
-def update_movie(id:int, movie:pyd.CreateMovie, db:Session=Depends(get_db)):
+def update_movie(id:int, movie:pyd.CreateMovie, db:Session=Depends(get_db), user: m.User = Depends(basic_auth)):
     movie_db = db.query(m.Movie).filter(
         m.Movie.id==id
     ).first()
@@ -75,7 +76,7 @@ def update_movie(id:int, movie:pyd.CreateMovie, db:Session=Depends(get_db)):
     return movie_db
 
 @app.delete("/movies/{id}")
-def delete_movie(id:int, db:Session=Depends(get_db)):
+def delete_movie(id:int, db:Session=Depends(get_db), user: m.User = Depends(basic_auth)):
     movie = db.query(m.Movie).filter(
         m.Movie.id==id
     ).first()
@@ -86,7 +87,7 @@ def delete_movie(id:int, db:Session=Depends(get_db)):
     return {'detail': "Фильм удалён"}
 
 @app.put("/movies/{id}/image", response_model=pyd.SchemeMovie)
-def upload_image(id: int, image: UploadFile, db: Session = Depends(get_db)):
+def upload_image(id: int, image: UploadFile, db: Session = Depends(get_db), user: m.User = Depends(basic_auth)):
     movie_db = (
         db.query(m.Movie).filter(m.Movie.id == id).first()
     )
@@ -115,7 +116,7 @@ def get_all_genres(db:Session=Depends(get_db)):
     return genres
 
 @app.post("/genres", response_model=pyd.CreateGenre)
-def create_genre(genre:pyd.CreateGenre, db:Session=Depends(get_db)):
+def create_genre(genre:pyd.CreateGenre, db:Session=Depends(get_db), user: m.User = Depends(basic_auth)):
     genre_db = m.Genre()
     genre_db.genre_name = genre.genre_name
     genre_db.genre_description = genre.genre_description

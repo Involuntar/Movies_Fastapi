@@ -26,3 +26,9 @@ class Genre_Movie(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     movie_id = Column(Integer, ForeignKey("movies.id"))
     genre_id = Column(Integer, ForeignKey("genres.id"), nullable=True)
+
+class User(Base):
+    __tablename__="users"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String)
+    password = Column(String)
