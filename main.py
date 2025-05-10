@@ -10,6 +10,7 @@ import string
 import random
 from auth import basic_auth
 import bcrypt
+import re
 
 
 app=FastAPI()
@@ -135,6 +136,9 @@ def user_register(create_user:pyd.CreateUser, db:Session=Depends(get_db)):
     user_db=m.User()
 
     user_db.username = create_user.username
+    match = re.fullmatch(r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", create_user.password)
+    if not match:
+        raise HTTPException(422, '''Password must: Has minimum 8 characters in length. At least one uppercase English letter. At least one lowercase English letter. At least one digit. At least one special character''')
     user_db.password = bcrypt.hashpw(str.encode(create_user.password), bcrypt.gensalt())
     user_db.email = create_user.email
 
